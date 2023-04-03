@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        nav li {
+            list-style-type: none;
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+<header></header>
+
+<main>
+    <button type="button" class="rec_start">音声認識開始</button>
+    <div class="output"></div>
+</main>
+<footer>
+</footer>
+    <script>
+        // 音声認識    
+        const getRecognition = () => {
+            const recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+            recognition.interimResults = true;
+            recognition.continuous = true;
+            recognition.lang = 'ja-JP';
+            recognition.onerror = (event) => {
+                console.error("音声認識中にエラーが発生しました：", event.error);
+            };
+            recognition.onresult = ({ results }) => {
+                const output = document.querySelector(".output");
+                output.textContent = results[0][0].transcript;
+            };
+            return recognition;
+        };
+
+        const recognition = getRecognition();
+        const recognitionControl = (command) => {
+            if (command === "start") {
+                recognition.start();
+                console.log("音声認識が開始されました。");
+            } else if (command === "stop") {
+                recognition.stop();
+                console.log("音声認識が終了しました。");
+            }
+        };
+
+        // buttonホールドでのスタートストップ処理
+        const recStartButton = document.querySelector(".rec_start");
+        recStartButton.addEventListener("mousedown", () => {
+            recStartButton.textContent = "音声認識中...";
+            recognitionControl("start");
+        });
+        recStartButton.addEventListener("mouseup", () => {
+            recStartButton.textContent = "音声認識開始";
+            recognitionControl("stop");
+        });
+
+        // spaceキーでのスタートストップ処理
+        let spacePressed = false;
+        window.addEventListener("keydown", (event) => {
+            if (event.code === "Space" && !spacePressed) {
+                spacePressed = true;
+                recStartButton.textContent = "音声認識中...";
+                recognitionControl("start");
+            }
+        });
+        window.addEventListener("keyup", async (event) => {
+            if (event.code === "Space") {
+                spacePressed = false;
+                recStartButton.textContent = "音声認識開始";
+                recognitionControl("stop");
+            }
+            if (event.code === "Space" && spacePressed === undefined) {
+                // keydown イベントで spacePressed 変数が未定義の場合に備えて初期化する 
+            }
+        });   
+    </script>
+</body>
+</html>
