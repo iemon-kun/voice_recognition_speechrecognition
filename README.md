@@ -1,1 +1,3 @@
 # voice_recognition_speechrecognition
+SpeechRecognitionを使って音声認識をします。
+音声認識開始を押している間、またはPCのスペースキーを押している間の発話を音声認識して文字起こしします。
